@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products - E-Commerce</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background-color: #f5f5f5; }
+    .navbar {
+      background-color: #333;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar a { color: white; text-decoration: none; margin-right: 1rem; }
+    .navbar a:hover { text-decoration: underline; }
+    .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { margin-bottom: 2rem; }
+    .filters {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+    .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; }
+    .btn { padding: 0.75rem 1.5rem; background-color: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    .btn:hover { background-color: #5568d3; }
+    .btn-add { background-color: #27ae60; }
+    .btn-add:hover { background-color: #229954; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .card-image { width: 100%; height: 200px; background-color: #ddd; display: flex; align-items: center; justify-content: center; }
+    .card-body { padding: 1.5rem; }
+    .card-title { font-size: 1.25rem; margin-bottom: 0.5rem; }
+    .card-price { font-size: 1.5rem; font-weight: bold; color: #667eea; margin-bottom: 0.5rem; }
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .badge-success { background-color: #d4edda; color: #155724; }
+    .badge-warning { background-color: #fff3cd; color: #856404; }
+    .badge-danger { background-color: #f8d7da; color: #721c24; }
+    .card-footer { margin-top: 1rem; display: flex; gap: 0.5rem; }
+    .btn-sm { padding: 0.5rem 1rem; font-size: 0.875rem; }
+    .btn-danger { background-color: #e74c3c; }
+    .btn-danger:hover { background-color: #c0392b; }
+    .pagination { text-align: center; margin-top: 2rem; }
+    .pagination button { margin: 0 0.5rem; padding: 0.5rem 1rem; }
+    .empty { text-align: center; padding: 2rem; background: white; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <h2>E-Commerce</h2>
+    <div>
+      <a href="/">Home</a>
+      <a href="/categories">Categories</a>
+      <a href="/products">Products</a>
+      <span id="userInfo"></span>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+      <h1>Products</h1>
+      <button class="btn btn-add" onclick="showAddForm()">+ Add Product</button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <div class="form-group">
+        <label for="searchName">Search Name:</label>
+        <input type="text" id="searchName" placeholder="Product name...">
+      </div>
+      <div class="form-group">
+        <label for="categoryFilter">Category:</label>
+        <select id="categoryFilter">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="minPrice">Min Price:</label>
+        <input type="number" id="minPrice" placeholder="0" min="0">
+      </div>
+      <div class="form-group">
+        <label for="maxPrice">Max Price:</label>
+        <input type="number" id="maxPrice" placeholder="10000" min="0">
+      </div>
+      <div class="form-group" style="display: flex; align-items: flex-end;">
+        <button class="btn" onclick="applyFilters()">Search</button>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="productsGrid" class="grid"></div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- Add/Edit Product Modal -->
+  <div id="productModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="background: white; margin: auto; padding: 2rem; border-radius: 8px; max-width: 600px; margin-top: 50px;">
+      <h2 id="modalTitle">Add Product</h2>
+      <form id="productForm">
+        <div class="form-group">
+          <label for="productName">Name:</label>
+          <input type="text" id="productName" required>
+        </div>
+        <div class="form-group">
+          <label for="productPrice">Price:</label>
+          <input type="number" id="productPrice" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label for="productQuantity">Quantity:</label>
+          <input type="number" id="productQuantity" required>
+        </div>
+        <div class="form-group">
+          <label for="productCategory">Category:</label>
+          <select id="productCategory" required></select>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+          <button type="submit" class="btn">Save</button>
+          <button type="button" class="btn" style="background-color: #95a5a6;" onclick="hideAddForm()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let currentLastKey = null;
+
+    // Load categories for filter
+    async function loadCategories() {
+      try {
+        const response = await fetch('/api/categories');
+        const data = await response.json();
+
+        const select = document.getElementById('categoryFilter');
+        const productSelect = document.getElementById('productCategory');
+
+        data.categories.forEach(cat => {
+          const option = document.createElement('option');
+          option.value = cat.categoryId;
+          option.textContent = cat.name;
+          select.appendChild(option);
+
+          const option2 = document.createElement('option');
+          option2.value = cat.categoryId;
+          option2.textContent = cat.name;
+          productSelect.appendChild(option2);
+        });
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      }
+    }
+
+    // Load products
+    async function loadProducts(lastKey = null) {
+      try {
+        let url = '/api/products?limit=12';
+        if (lastKey) {
+          url += '&lastKey=' + encodeURIComponent(JSON.stringify(lastKey));
+        }
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const grid = document.getElementById('productsGrid');
+        grid.innerHTML = '';
+
+        if (data.items.length === 0) {
+          grid.innerHTML = '<div class="empty" style="grid-column: 1/-1;">No products found</div>';
+          return;
+        }
+
+        data.items.forEach(product => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div class="card-image">
+              ${product.url_image ? `<img src="${product.url_image}" style="width: 100%; height: 100%; object-fit: cover;">` : 'No Image'}
+            </div>
+            <div class="card-body">
+              <div class="card-title">${product.name}</div>
+              <div class="card-price">$${product.price.toFixed(2)}</div>
+              <div>Category: <strong>${product.categoryName}</strong></div>
+              <div style="margin-top: 0.5rem;">
+                <span class="badge ${
+                  product.isOutOfStock ? 'badge-danger' :
+                  product.isLowStock ? 'badge-warning' :
+                  'badge-success'
+                }">${product.inventoryStatus}</span>
+              </div>
+              <div style="margin-top: 0.5rem; color: #666;">Stock: ${product.quantity}</div>
+              <div class="card-footer">
+                <button class="btn btn-sm" onclick="viewProduct('${product.id}')">View</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteProduct('${product.id}')">Delete</button>
+              </div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        // Pagination
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+        if (data.lastKey) {
+          const btn = document.createElement('button');
+          btn.className = 'btn';
+          btn.textContent = 'Load More';
+          btn.onclick = () => loadProducts(data.lastKey);
+          pagination.appendChild(btn);
+        }
+
+        currentLastKey = data.lastKey;
+      } catch (error) {
+        console.error('Error loading products:', error);
+      }
+    }
+
+    // Apply filters
+    async function applyFilters() {
+      const name = document.getElementById('searchName').value;
+      const categoryId = document.getElementById('categoryFilter').value;
+      const minPrice = document.getElementById('minPrice').value;
+      const maxPrice = document.getElementById('maxPrice').value;
+
+      let url = '/api/products/search?';
+      if (name) url += `name=${encodeURIComponent(name)}&`;
+      if (categoryId) url += `categoryId=${categoryId}&`;
+      if (minPrice) url += `minPrice=${minPrice}&`;
+      if (maxPrice) url += `maxPrice=${maxPrice}&`;
+      url += 'limit=12';
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const grid = document.getElementById('productsGrid');
+        grid.innerHTML = '';
+
+        if (data.items.length === 0) {
+          grid.innerHTML = '<div class="empty" style="grid-column: 1/-1;">No products found</div>';
+          return;
+        }
+
+        data.items.forEach(product => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div class="card-image">
+              ${product.url_image ? `<img src="${product.url_image}" style="width: 100%; height: 100%; object-fit: cover;">` : 'No Image'}
+            </div>
+            <div class="card-body">
+              <div class="card-title">${product.name}</div>
+              <div class="card-price">$${product.price.toFixed(2)}</div>
+              <div>Category: <strong>${product.categoryName}</strong></div>
+              <div style="margin-top: 0.5rem;">
+                <span class="badge ${
+                  product.isOutOfStock ? 'badge-danger' :
+                  product.isLowStock ? 'badge-warning' :
+                  'badge-success'
+                }">${product.inventoryStatus}</span>
+              </div>
+              <div style="margin-top: 0.5rem; color: #666;">Stock: ${product.quantity}</div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        console.log(`Scanned: ${data.scannedCount}, Returned: ${data.count}`);
+      } catch (error) {
+        console.error('Error filtering products:', error);
+      }
+    }
+
+    // Show add form
+    function showAddForm() {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || user.role !== 'admin') {
+        alert('Only admins can add products');
+        return;
+      }
+      document.getElementById('productModal').style.display = 'block';
+      document.getElementById('modalTitle').textContent = 'Add Product';
+      document.getElementById('productForm').reset();
+    }
+
+    // Hide form
+    function hideAddForm() {
+      document.getElementById('productModal').style.display = 'none';
+    }
+
+    // Delete product
+    async function deleteProduct(id) {
+      if (!confirm('Delete this product?')) return;
+
+      try {
+        const response = await fetch(`/api/products/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          alert('Product deleted');
+          loadProducts();
+        } else {
+          alert('Error deleting product');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCategories();
+      loadProducts();
+
+      // Check user info
+      fetch('/api/auth/me')
+        .then(res => res.json())
+        .then(data => {
+          if (data.user) {
+            localStorage.setItem('user', JSON.stringify(data.user));
+            document.getElementById('userInfo').innerHTML = `
+              <span>${data.user.username}</span>
+              <a href="/logout" style="margin-left: 1rem;">Logout</a>
+            `;
+          }
+        });
+    });
+
+    // Form submit
+    document.getElementById('productForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const product = {
+        name: document.getElementById('productName').value,
+        price: parseFloat(document.getElementById('productPrice').value),
+        quantity: parseInt(document.getElementById('productQuantity').value),
+        categoryId: document.getElementById('productCategory').value
+      };
+
+      try {
+        const response = await fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(product)
+        });
+
+        if (response.ok) {
+          alert('Product added');
+          hideAddForm();
+          loadProducts();
+        } else {
+          alert('Error adding product');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  </script>
+</body>
+</html>
