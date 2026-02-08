@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách sản phẩm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #000;
+            color: white;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: #e0e0e0;
+        }
+
+        .user-info strong {
+            color: white;
+        }
+
+        .mb-20 {
+            padding: 30px 40px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-success {
+            background: #000;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #000;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f5f5;
+            border-color: #000;
+        }
+
+        .btn-warning {
+            background: #666;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #000;
+        }
+
+        .btn-danger {
+            background: white;
+            color: #000;
+            border: 2px solid #000;
+        }
+
+        .btn-danger:hover {
+            background: #000;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        thead {
+            background: #f8f8f8;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 2px solid #000;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 700;
+            color: #000;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 20px 16px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f8f8;
+        }
+
+        .product-id {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .no-image {
+            width: 80px;
+            height: 80px;
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .actions form {
+            margin: 0;
+        }
+
+        .text-center {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 12px 8px;
+            }
+
+            .actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Quản lý sản phẩm</h1>
+            <div class="user-info">
+                <span>Xin chào, <strong>
+                        <%= user.username %>
+                    </strong></span>
+                <a href="/logout" class="btn btn-secondary">Đăng xuất</a>
+            </div>
+        </div>
+
+        <div class="mb-20">
+            <a href="/products/add" class="btn btn-success">+ Thêm sản phẩm mới</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Hình ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (products.length===0) { %>
+                    <tr>
+                        <td colspan="5" class="text-center">Chưa có sản phẩm nào</td>
+                    </tr>
+                    <% } else { %>
+                        <% products.forEach(product=> { %>
+                            <tr>
+                                <td class="product-id">
+                                    <%= product.id.substring(0, 8) %>...
+                                </td>
+                                <td>
+                                    <% if (product.url_image) { %>
+                                        <img src="<%= product.url_image %>" alt="<%= product.name %>" class="product-image">
+                                    <% } else { %>
+                                        <div class="no-image">No Image</div>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <%= product.name %>
+                                </td>
+                                <td>
+                                    <%= product.price.toLocaleString('vi-VN') %> đ
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <a href="/products/edit/<%= product.id %>" class="btn btn-warning">Sửa</a>
+                                        <form action="/products/delete/<%= product.id %>" method="POST"
+                                            onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                                            <button type="submit" class="btn btn-danger">Xóa</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }); %>
+                                <% } %>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
