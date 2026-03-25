@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -sharedDb"
+
+# docker-compose up -d
+# npm install express ejs aws-sdk multer uuid method-override

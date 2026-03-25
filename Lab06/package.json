@@ -1,0 +1,22 @@
+{
+  "name": "22716071_nguyengiahao",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1693.0",
+    "ejs": "^5.0.1",
+    "express": "^5.2.1",
+    "method-override": "^3.0.0",
+    "multer": "^2.1.1",
+    "nodemon": "^3.1.14",
+    "uuid": "^13.0.0"
+  }
+}

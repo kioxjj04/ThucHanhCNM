@@ -1,0 +1,34 @@
+<h1>Sửa sản phẩm</h1>
+
+<form action="/edit/<%= product.id %>" method="POST" enctype="multipart/form-data">
+
+<div>
+    <label>Tên sản phẩm:</label>
+    <input type="text" name="name" value="<%= product.name %>" required>
+</div>
+
+<div>
+    <label>Giá:</label>
+    <input type="number" name="price" value="<%= product.price %>" required>
+</div>
+
+<div>
+    <label>Số lượng:</label>
+    <input type="number" name="stock" value="<%= product.unit_in_stock %>" required>
+</div>
+
+<div>
+    <label>Ảnh hiện tại:</label><br>
+    <img src="<%= product.url_image %>" width="150">
+</div>
+
+<div>
+    <label>Chọn ảnh mới:</label>
+    <input type="file" name="image" accept="image/*">
+</div>
+
+<button type="submit">Cập nhật</button>
+</form>
+
+<br>
+<a href="/">← Quay lại</a>
